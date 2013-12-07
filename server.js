@@ -19,7 +19,7 @@ app.configure(function(){
 // app.get('/thread/:title.:format?', api.show);
 // app.get('/thread', api.list);
 
-app.listen(3300);
+app.listen(3000);
 // console.log("Express server listening on port %d", app.address().port);
 app.get('/', function(req, res) {
   res.send('hi there');

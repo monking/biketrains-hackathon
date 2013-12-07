@@ -1,11 +1,10 @@
-# Hack For LA Hackathon 2013-12-07
+# Bike Train service
 
-What's it gonna be?
+Serve bike train locations realtime (Hack For LA Hackathon 2013-12-07)
 
 ## Install
 
 ```
-npm install -g grunt-cli
 npm install
 ```
 ## References, opportunities
