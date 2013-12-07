@@ -1,0 +1,12 @@
+{
+  "name":"biketrains",
+  "dependencies":{
+    "express":"3.4.6",
+    "mongoose":"3.8.1"
+  },
+  "devDependencies":{
+    "grunt-contrib-coffee":"0.7.0",
+    "grunt":"0.4.2"
+  },
+  "repository":"git@github.com:monking/biketrains-hackathon.git"
+}
