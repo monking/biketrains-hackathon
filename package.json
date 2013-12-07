@@ -1,8 +1,17 @@
 {
   "name":"biketrains",
+  "scripts":{
+    "start":"node app/js/server.js"
+  },
   "dependencies":{
     "express":"3.4.6",
     "jade":"0.35.0"
+  },
+  "devDependencies":{
+    "grunt":"0.4.2",
+    "grunt-contrib-coffee":"0.7.0",
+    "grunt-contrib-watch":"0.5.3",
+    "grunt-contrib-jade":"0.8.0"
   },
   "repository":"git@github.com:monking/biketrains-hackathon.git"
 }
