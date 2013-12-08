@@ -7,6 +7,13 @@ mixin header(title)
 if (user && user.token)
   .welcome= "Welcome, " + user.name + "!"
   h2= subtitle
+  form
+    h3 Search for Routes Near You
+    .search
+      input(type='text', name="zip_from", placeholder="ZIP (from)")
+      input(type='text', name="zip_to", placeholder="ZIP (to)")
+    .submit
+      input(type='submit', value='Search')
   if routes
     mixin listRoutes(routes)
 else

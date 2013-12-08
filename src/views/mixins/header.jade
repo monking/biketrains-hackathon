@@ -3,25 +3,7 @@ mixin header(title)
   html(lang=en)
     head
       title= title
-      style.
-        html, body {
-          width: 100%;
-          height: 100%;
-        }
-        body {
-          font-family: sans-serif;
-          max-width: 980px;
-          width: 90%;
-          margin: 0 auto;
-        }
-        footer {
-          padding-top: 1em;
-          border-top: 1px solid rgba(0,0,0,0.3);
-          margin: 1em 0;
-        }
-        a {
-          text-decoration: none;
-        }
+      link(href='/css/screen.css', rel='stylesheet', type='text/css')
     script(src='https://maps.googleapis.com/maps/api/js?key=' + services.google.apiKey + '&sensor=true')
     body
       h1
