@@ -15,8 +15,10 @@ api = require('./api');
 _ref = api.get;
 for (name in _ref) {
   action = _ref[name];
-  app.get("/" + name, action);
+  app.get(new RegExp("^/" + name + "/?(.*)"), action);
 }
+
+app.use(express["static"]("" + __dirname + "/../public"));
 
 app.get('/', api.get.routes);
 

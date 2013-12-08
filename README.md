@@ -11,7 +11,7 @@ In the works...
 ### Setup Grunt
 
 ```
-npm install -g grunt-cli
+npm install -g grunt-cli forever
 npm install
 ```
 
@@ -21,7 +21,18 @@ npm install
 module.exports = {
   title: 'Bike Trains',
   redirectURI: 'http://localhost:3000/token',
+  defaultService: "strava",
   services: {
+    strava: {
+      authorizationPath: '/oauth/authorize',
+      tokenPath: '/oauth/token',
+      clientID: 'your-client-id',
+      clientSecret: 'your-client-secret',
+      site: 'https://www.strava.com/api/v3',
+      authSite: ' https://www.strava.com',
+      scope: 'public',
+      debugToken: 'your-debug-token'
+    },
     google: {
       authorizationPath: '/oauth2/auth',
       tokenPath: '/oauth2/token',
@@ -40,6 +51,12 @@ module.exports = {
   }
 };
 ```
+
+## Run the service
+
+Do `npm start`.
+
+Use `forever` to manage the service.
 
 ## What's the goal?
 

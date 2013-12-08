@@ -3,25 +3,25 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
 
     coffee:
-      compile:
+      app:
         options:
           bare: true
         expand: true
-        cwd: 'src/coffee'
+        cwd: 'src/app'
         src: '*.coffee'
-        dest: 'app/js'
+        dest: 'app'
+        ext: '.js'
+      public:
+        options:
+          bare: true
+        expand: true
+        cwd: 'src/public'
+        src: '*.coffee'
+        dest: 'public/js'
         ext: '.js'
 
-    jade:
-      compile:
-        options:
-          data:
-            debug: false
-        files:
-          'app/views/home.html': 'src/views/home.jade'
-
     watch:
-      files: ['src/coffee/*.coffee', 'src/views/*.jade']
+      files: ['src/app/*.coffee','src/public/*.coffee']
       tasks: ['default']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
