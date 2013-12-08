@@ -37,10 +37,13 @@ class Service
           self.setToken result.access_token
           callback?.call self
 
-  get: (path, callback) ->
+  get: (path, callback, query = null) ->
     request = require 'request'
+    querystring = require 'querystring'
+    url = @options.site + path
+    url += ("?" + querystring.stringify query) if query?
     options =
-      url: @options.site + path
+      url: url
       form:
         access_token: @token
 

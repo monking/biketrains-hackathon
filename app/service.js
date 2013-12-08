@@ -49,11 +49,19 @@ Service = (function() {
     }
   };
 
-  Service.prototype.get = function(path, callback) {
-    var options, request;
+  Service.prototype.get = function(path, callback, query) {
+    var options, querystring, request, url;
+    if (query == null) {
+      query = null;
+    }
     request = require('request');
+    querystring = require('querystring');
+    url = this.options.site + path;
+    if (query != null) {
+      url += "?" + querystring.stringify(query);
+    }
     options = {
-      url: this.options.site + path,
+      url: url,
       form: {
         access_token: this.token
       }

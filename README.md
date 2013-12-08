@@ -19,6 +19,7 @@ npm install
 
 ```
 module.exports = {
+  debug: false,
   title: 'Bike Trains',
   redirectURI: 'http://localhost:3000/token',
   defaultService: "strava",
