@@ -1,12 +1,27 @@
-var Google, Strava, api, config, getService, token;
+var Google, Strava, api, config, getService, inherit, token, viewDefaultData,
+  __slice = [].slice;
 
-config = require('../../config.js');
+config = require('../config.js');
 
 Strava = require('./strava.js');
 
 Google = require('./google.js');
 
 token = null;
+
+viewDefaultData = {
+  title: config.title,
+  user: {
+    name: 'So-and-so',
+    token: null
+  },
+  routes: null,
+  route: null,
+  stream: null,
+  conductor: null,
+  ride: null,
+  services: config.services
+};
 
 getService = function(options) {
   var key, service, serviceConfig, value;
@@ -22,7 +37,6 @@ getService = function(options) {
     }
   }
   options.token = options.token || token || (config.debug && serviceConfig.debugToken);
-  console.log(options);
   service = new (require("./" + config.defaultService))(options);
   if (service.token != null) {
     token = service.token;
@@ -30,42 +44,47 @@ getService = function(options) {
   return service;
 };
 
+inherit = function() {
+  var child, key, parent, parents, value, _i, _len;
+  child = arguments[0], parents = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+  if (child == null) {
+    child = {};
+  }
+  for (_i = 0, _len = parents.length; _i < _len; _i++) {
+    parent = parents[_i];
+    for (key in parent) {
+      value = parent[key];
+      if (child[key] == null) {
+        child[key] = value;
+      }
+    }
+  }
+  return child;
+};
+
 api = module.exports = {
   get: {
     routes: function(request, response) {
       var render, service;
       render = function(data) {
-        var key, value, _ref;
-        if (data == null) {
-          data = {};
-        }
-        _ref = {
-          title: config.title,
-          activities: null,
-          user: {
-            name: 'So-and-so',
-            token: token
-          }
-        };
-        for (key in _ref) {
-          value = _ref[key];
-          if (data[key] == null) {
-            data[key] = value;
-          }
-        }
         return response.render('../src/views/routes.jade', data);
       };
       service = getService();
       if (service.token) {
         return service.getRoutes(function(result) {
-          return render({
-            title: config.title,
+          var data;
+          data = inherit({
             subtitle: "All Routes",
-            result: result
-          });
+            routes: result,
+            user: {
+              name: 'So-and-so',
+              token: service.token
+            }
+          }, viewDefaultData);
+          return render(data);
         });
       } else {
-        return render();
+        return render(viewDefaultData);
       }
     },
     status: function(request, response) {
@@ -73,18 +92,19 @@ api = module.exports = {
       service = getService();
       if (service.token) {
         id = request.params[0];
-        console.log("getting route #" + id);
-        console.log(service.token);
         return service.getStatus(id, function(result) {
-          return response.render('../src/views/routes.jade', {
-            title: config.title,
-            subtitle: "Route " + id,
-            result: result,
+          var data;
+          data = inherit({
+            route: {
+              id: id
+            },
+            stream: result,
             user: {
               name: 'So-and-so',
               token: service.token
             }
-          });
+          }, viewDefaultData);
+          return response.render('../src/views/status.jade', data);
         });
       } else {
         return response.redirect('/');

@@ -54,11 +54,12 @@ Service = (function() {
     request = require('request');
     options = {
       url: this.options.site + path,
-      method: "get",
-      body: "access_token=" + this.token
+      form: {
+        access_token: this.token
+      }
     };
-    return request.get(options, function(error, response, body) {
-      return callback(response);
+    return request(options, function(error, response, body) {
+      return callback(JSON.parse(body));
     });
   };
 

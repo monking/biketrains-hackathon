@@ -41,12 +41,11 @@ class Service
     request = require 'request'
     options =
       url: @options.site + path
-      method: "get"
-      body: "access_token=#{@token}"
+      form:
+        access_token: @token
 
-    # using post method to enable `body`, forcing method `GET`
-    request.get options, (error, response, body) ->
-      callback response
+    request options, (error, response, body) ->
+      callback JSON.parse body
 
   getRoutes: (callback)->
     callback null

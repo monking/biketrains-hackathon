@@ -15,6 +15,9 @@ api = require './api'
 # define default routes based on API structure
 app.get new RegExp("^/#{name}/?(.*)"), action for name, action of api.get
 
+# routes to static files
+app.use express.static "#{__dirname}/../public"
+
 # add more routes as needed
 app.get '/', api.get.routes
 

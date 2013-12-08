@@ -1,0 +1,6 @@
+mixin listRoutes(routes)
+  h3 Routes
+  ul.routes
+    each route in routes
+      li
+        a(href='/status/' + route.id)= route.name

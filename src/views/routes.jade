@@ -1,19 +1,14 @@
 include mixins/header
 include mixins/footer
+include mixins/listRoutes
 
 mixin header(title)
 
-if (user.token)
+if (user && user.token)
   .welcome= "Welcome, " + user.name + "!"
   h2= subtitle
-  p= "activity: " + activities
-  p= "Token: " + user.token
-  p= "result: : " + result
-  h3 Result
-  ul.activities
-    each activity in result
-      li= activity
-  a(href='/status/1') Route 001
+  if routes
+    mixin listRoutes(routes)
 else
   .welcome Maybe you should 
     a(href='/auth') log in

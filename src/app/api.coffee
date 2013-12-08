@@ -1,8 +1,20 @@
-config = require '../../config.js'
+config = require '../config.js'
 Strava = require './strava.js'
 Google = require './google.js'
 
 token = null
+
+viewDefaultData =
+  title: config.title
+  user:
+    name: 'So-and-so'
+    token: null
+  routes: null
+  route: null
+  stream: null
+  conductor: null
+  ride: null
+  services: config.services
 
 getService = (options) ->
 
@@ -16,54 +28,56 @@ getService = (options) ->
   options ?= {}
   options[key] ?= value for key, value of serviceConfig
   options.token = options.token or token or (config.debug and serviceConfig.debugToken)
-  console.log options
   service = new (require "./#{config.defaultService}") options
 
   token = service.token if service.token?
 
   service
 
+inherit = (child, parents...) ->
+  child ?= {}
+  (child[key] ?= value for key, value of parent) for parent in parents
+  child
+
 api = module.exports =
   get:
     routes: (request, response) ->
       render = (data) ->
-        data ?= {}
-        data[key] ?= value for key, value of {
-          title: config.title
-          activities: null
-          user:
-            name: 'So-and-so'
-            token: token
-        }
-
         response.render '../src/views/routes.jade', data
 
       service = getService()
 
       if service.token
         service.getRoutes (result) ->
-          render
-            title: config.title
-            subtitle: "All Routes"
-            result: result
+          data = inherit {
+            subtitle: "All Routes",
+            routes: result
+            user:
+              name: 'So-and-so'
+              token: service.token
+          }, viewDefaultData
+
+          render data
       else
-        render()
+        render  viewDefaultData
 
     status: (request, response) ->
       service = getService()
       if service.token
         id = request.params[0]
-        console.log "getting route ##{id}"
 
-        console.log service.token
         service.getStatus id, (result) ->
-          response.render '../src/views/routes.jade',
-            title: config.title
-            subtitle: "Route #{id}"
-            result: result
+          # console.log result
+          data = inherit {
+            route:
+              id: id
+            stream: result
             user:
               name: 'So-and-so'
               token: service.token
+          }, viewDefaultData
+
+          response.render '../src/views/status.jade', data
       else
         response.redirect '/'
 

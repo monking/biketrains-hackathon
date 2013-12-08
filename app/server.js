@@ -18,6 +18,8 @@ for (name in _ref) {
   app.get(new RegExp("^/" + name + "/?(.*)"), action);
 }
 
+app.use(express["static"]("" + __dirname + "/../public"));
+
 app.get('/', api.get.routes);
 
 app.listen(3000);

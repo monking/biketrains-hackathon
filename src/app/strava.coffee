@@ -12,14 +12,14 @@ class Strava extends Service
 
   getRoutes: (callback) ->
     self = @
-    @get '/athlete/activities', (body) ->
-      self.activities = body
-      callback body
+    @get '/athlete/activities', (data) ->
+      self.routes = data #TODO: check if there are errors
+      callback data
 
   getStatus: (id, callback) ->
     self = @
-    @get "/activities/#{id}/streams/latlng", (body) ->
-      self.stream = body
-      callback body
+    @get "/activities/#{id}/streams/latlng", (data) ->
+      self.status = data #TODO: check if there are errors
+      callback data
 
 module.exports = Strava

@@ -30,18 +30,18 @@ Strava = (function(_super) {
   Strava.prototype.getRoutes = function(callback) {
     var self;
     self = this;
-    return this.get('/athlete/activities', function(body) {
-      self.activities = body;
-      return callback(body);
+    return this.get('/athlete/activities', function(data) {
+      self.routes = data;
+      return callback(data);
     });
   };
 
   Strava.prototype.getStatus = function(id, callback) {
     var self;
     self = this;
-    return this.get("/activities/" + id + "/streams/latlng", function(body) {
-      self.stream = body;
-      return callback(body);
+    return this.get("/activities/" + id + "/streams/latlng", function(data) {
+      self.status = data;
+      return callback(data);
     });
   };
 
