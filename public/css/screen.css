@@ -1,0 +1,40 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
+body {
+  font-family: sans-serif;
+  max-width: 980px;
+  width: 90%;
+  margin: 0 auto;
+  border-bottom: 1px solid transparent;
+}
+footer {
+  padding-top: 1em;
+  border-top: 1px solid rgba(0,0,0,0.3);
+  margin: 1em 0;
+}
+a {
+  text-decoration: none;
+}
+form {
+  width:400px;
+}
+input, select {
+  font-size: inherit;
+}
+input[type=text] {
+  border: 1px solid rgba(0,0,0,0.2);
+  padding: 0.2em;
+  border-radius: 0.1em;
+  width:47%;
+}
+input[type=submit],
+input[type=button],
+button {
+  padding: 0.2em;
+}
+form .submit input[type="submit"] {
+  text-align: center;
+  width: 98%;
+}
