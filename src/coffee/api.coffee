@@ -2,14 +2,17 @@ config = require '../../config.js'
 Strava = require './strava.js'
 Google = require './google.js'
 
-service = null
-getService = (token) ->
-  if !service?
-    options = config.services[config.defaultService]
-    options.redirectURI = config.redirectURI
-    service = new (require "./#{config.defaultService}") options
+token = null
 
-  service
+getService = (options) ->
+
+  serviceConfig = config.services[config.defaultService]
+  serviceConfig.redirectURI = config.redirectURI
+
+  # use service config, and override with provided options
+  options ?= {}
+  options[key] ?= value for key, value of serviceConfig
+  new (require "./#{config.defaultService}") options
 
 api = module.exports =
   get:
@@ -21,7 +24,9 @@ api = module.exports =
           user:
             name: 'So-and-so'
 
-      if service
+      if token
+        service = getService
+          token: token
         id = request.params[1]
         if id
           service.getStatus id, (result) ->
@@ -45,10 +50,16 @@ api = module.exports =
         response.redirect '/'
 
     auth: (request, response) ->
-      response.redirect getService().getAuthorizationURI()
+      serviceOptions = {}
+      serviceOptions.site = config.services[config.defaultService].authSite if config.services[config.defaultService].authSite?
+      authURL = getService(serviceOptions).getAuthorizationURI()
+
+      # response.send authURL # debug
+      response.redirect authURL
 
     token: (request, response) ->
       getService().getToken request, () ->
+        token = @token
         response.redirect '/'
 
   post: null #stub

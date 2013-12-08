@@ -1,4 +1,4 @@
-var Google, Strava, api, config, getService, service;
+var Google, Strava, api, config, getService, token;
 
 config = require('../../config.js');
 
@@ -6,22 +6,28 @@ Strava = require('./strava.js');
 
 Google = require('./google.js');
 
-service = null;
+token = null;
 
-getService = function(token) {
-  var options;
-  if (service == null) {
-    options = config.services[config.defaultService];
-    options.redirectURI = config.redirectURI;
-    service = new (require("./" + config.defaultService))(options);
+getService = function(options) {
+  var key, serviceConfig, value;
+  serviceConfig = config.services[config.defaultService];
+  serviceConfig.redirectURI = config.redirectURI;
+  if (options == null) {
+    options = {};
   }
-  return service;
+  for (key in serviceConfig) {
+    value = serviceConfig[key];
+    if (options[key] == null) {
+      options[key] = value;
+    }
+  }
+  return new (require("./" + config.defaultService))(options);
 };
 
 api = module.exports = {
   get: {
     route: function(request, response) {
-      var id, render;
+      var id, render, service;
       render = function(activities) {
         if (activities == null) {
           activities = null;
@@ -34,7 +40,10 @@ api = module.exports = {
           }
         });
       };
-      if (service) {
+      if (token) {
+        service = getService({
+          token: token
+        });
         id = request.params[1];
         if (id) {
           return service.getStatus(id, function(result) {
@@ -66,10 +75,17 @@ api = module.exports = {
       }
     },
     auth: function(request, response) {
-      return response.redirect(getService().getAuthorizationURI());
+      var authURL, serviceOptions;
+      serviceOptions = {};
+      if (config.services[config.defaultService].authSite != null) {
+        serviceOptions.site = config.services[config.defaultService].authSite;
+      }
+      authURL = getService(serviceOptions).getAuthorizationURI();
+      return response.redirect(authURL);
     },
     token: function(request, response) {
       return getService().getToken(request, function() {
+        token = this.token;
         return response.redirect('/');
       });
     }
