@@ -1,11 +1,11 @@
 class Service
   constructor: (@options) ->
+    @oauth = (require 'simple-oauth2') @options
     if @options.token?
       console.log "service initiated with token: #{options.token}"
-      @token = @options.token
+      @setToken @options.token
     else
       console.log "service initiated without token"
-      @oauth = (require 'simple-oauth2') @options
 
   getAuthorizationURI: ->
     # optionally, include `state` parameter
@@ -14,6 +14,10 @@ class Service
       scope: @options.scope
 
   oauth: null
+
+  setToken: (token) ->
+    @tokenObject = @oauth.AccessToken.create token
+    @token = @tokenObject.token
 
   getToken: (request, callback) ->
     if @token
@@ -30,20 +34,21 @@ class Service
         if (error)
           console.log 'Access Token Error', error.message
         else
-          self.token = self.oauth.AccessToken.create result
+          self.setToken result.access_token
           callback?.call self
 
   get: (path, callback) ->
     request = require 'request'
     options =
       url: @options.site + path
-      oauth:
-        auth_token: @token.token.access_token
+      method: "get"
+      body: "access_token=#{@token}"
 
+    # using post method to enable `body`, forcing method `GET`
     request.get options, (error, response, body) ->
-      callback body
+      callback response
 
-  getRoutes: (id, callback)->
+  getRoutes: (callback)->
     callback null
 
   getStatus: (id, callback)->

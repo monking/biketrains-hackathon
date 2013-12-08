@@ -3,12 +3,12 @@ var Service;
 Service = (function() {
   function Service(options) {
     this.options = options;
+    this.oauth = (require('simple-oauth2'))(this.options);
     if (this.options.token != null) {
       console.log("service initiated with token: " + options.token);
-      this.token = this.options.token;
+      this.setToken(this.options.token);
     } else {
       console.log("service initiated without token");
-      this.oauth = (require('simple-oauth2'))(this.options);
     }
   }
 
@@ -21,6 +21,11 @@ Service = (function() {
   };
 
   Service.prototype.oauth = null;
+
+  Service.prototype.setToken = function(token) {
+    this.tokenObject = this.oauth.AccessToken.create(token);
+    return this.token = this.tokenObject.token;
+  };
 
   Service.prototype.getToken = function(request, callback) {
     var self, url, urlParts;
@@ -37,7 +42,7 @@ Service = (function() {
         if (error) {
           return console.log('Access Token Error', error.message);
         } else {
-          self.token = self.oauth.AccessToken.create(result);
+          self.setToken(result.access_token);
           return callback != null ? callback.call(self) : void 0;
         }
       });
@@ -49,16 +54,15 @@ Service = (function() {
     request = require('request');
     options = {
       url: this.options.site + path,
-      oauth: {
-        auth_token: this.token.token.access_token
-      }
+      method: "get",
+      body: "access_token=" + this.token
     };
     return request.get(options, function(error, response, body) {
-      return callback(body);
+      return callback(response);
     });
   };
 
-  Service.prototype.getRoutes = function(id, callback) {
+  Service.prototype.getRoutes = function(callback) {
     return callback(null);
   };
 

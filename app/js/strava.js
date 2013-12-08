@@ -12,22 +12,22 @@ Strava = (function(_super) {
     return _ref;
   }
 
-  Strava.prototype.athlete = null;
+  Strava.prototype.conductor = null;
 
-  Strava.prototype.activities = null;
+  Strava.prototype.routes = null;
 
-  Strava.prototype.stream = null;
+  Strava.prototype.status = null;
 
-  Strava.prototype.getAthlete = function(callback) {
+  Strava.prototype.getConductor = function(callback) {
     var self;
     self = this;
     return this.get('/athlete', function(body) {
-      self.athlete = body;
+      self.conductor = body;
       return callback(body);
     });
   };
 
-  Strava.prototype.getActivities = function(callback) {
+  Strava.prototype.getRoutes = function(callback) {
     var self;
     self = this;
     return this.get('/athlete/activities', function(body) {
@@ -36,21 +36,13 @@ Strava = (function(_super) {
     });
   };
 
-  Strava.prototype.getActivityStream = function(id, callback) {
+  Strava.prototype.getStatus = function(id, callback) {
     var self;
     self = this;
     return this.get("/activities/" + id + "/streams/latlng", function(body) {
       self.stream = body;
       return callback(body);
     });
-  };
-
-  Strava.prototype.getRoutes = function(id, callback) {
-    return this.getActivities.apply(this, arguments);
-  };
-
-  Strava.prototype.getStatus = function(id, callback) {
-    return this.getActivityStream.apply(this, arguments);
   };
 
   return Strava;

@@ -15,8 +15,13 @@ getService = (options) ->
 
   options ?= {}
   options[key] ?= value for key, value of serviceConfig
-  options.token ?= token.token.access_token if token?
-  new (require "./#{config.defaultService}") options
+  options.token = options.token or token or (config.debug and serviceConfig.debugToken)
+  console.log options
+  service = new (require "./#{config.defaultService}") options
+
+  token = service.token if service.token?
+
+  service
 
 api = module.exports =
   get:
@@ -33,33 +38,32 @@ api = module.exports =
 
         response.render '../src/views/routes.jade', data
 
-      if token
-        service = getService
-          token: token
-        id = request.params[1]
-        if id
-          console.log "looking up a specific route"
-          service.getStatus id, (result) ->
-            render
-              title: config.title
-              result: result
-        else
-          console.log "listing all routes"
-          service.getRoutes (result) ->
-            render
-              title: config.title
-              result: result
+      service = getService()
+
+      if service.token
+        service.getRoutes (result) ->
+          render
+            title: config.title
+            subtitle: "All Routes"
+            result: result
       else
         render()
 
     status: (request, response) ->
-      if service
+      service = getService()
+      if service.token
+        id = request.params[0]
+        console.log "getting route ##{id}"
+
+        console.log service.token
         service.getStatus id, (result) ->
           response.render '../src/views/routes.jade',
             title: config.title
-            activities: activities
+            subtitle: "Route #{id}"
+            result: result
             user:
               name: 'So-and-so'
+              token: service.token
       else
         response.redirect '/'
 
@@ -74,7 +78,6 @@ api = module.exports =
     token: (request, response) ->
       getService().getToken request, () ->
         token = @token
-        console.log token
         response.redirect '/'
 
   post: null #stub

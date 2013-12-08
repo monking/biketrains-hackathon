@@ -9,7 +9,7 @@ Google = require('./google.js');
 token = null;
 
 getService = function(options) {
-  var key, serviceConfig, value;
+  var key, service, serviceConfig, value;
   serviceConfig = config.services[config.defaultService];
   serviceConfig.redirectURI = config.redirectURI;
   if (options == null) {
@@ -21,18 +21,19 @@ getService = function(options) {
       options[key] = value;
     }
   }
-  if (token != null) {
-    if (options.token == null) {
-      options.token = token.token.access_token;
-    }
+  options.token = options.token || token || (config.debug && serviceConfig.debugToken);
+  console.log(options);
+  service = new (require("./" + config.defaultService))(options);
+  if (service.token != null) {
+    token = service.token;
   }
-  return new (require("./" + config.defaultService))(options);
+  return service;
 };
 
 api = module.exports = {
   get: {
     routes: function(request, response) {
-      var id, render, service;
+      var render, service;
       render = function(data) {
         var key, value, _ref;
         if (data == null) {
@@ -54,40 +55,34 @@ api = module.exports = {
         }
         return response.render('../src/views/routes.jade', data);
       };
-      if (token) {
-        service = getService({
-          token: token
+      service = getService();
+      if (service.token) {
+        return service.getRoutes(function(result) {
+          return render({
+            title: config.title,
+            subtitle: "All Routes",
+            result: result
+          });
         });
-        id = request.params[1];
-        if (id) {
-          console.log("looking up a specific route");
-          return service.getStatus(id, function(result) {
-            return render({
-              title: config.title,
-              result: result
-            });
-          });
-        } else {
-          console.log("listing all routes");
-          return service.getRoutes(function(result) {
-            return render({
-              title: config.title,
-              result: result
-            });
-          });
-        }
       } else {
         return render();
       }
     },
     status: function(request, response) {
-      if (service) {
+      var id, service;
+      service = getService();
+      if (service.token) {
+        id = request.params[0];
+        console.log("getting route #" + id);
+        console.log(service.token);
         return service.getStatus(id, function(result) {
           return response.render('../src/views/routes.jade', {
             title: config.title,
-            activities: activities,
+            subtitle: "Route " + id,
+            result: result,
             user: {
-              name: 'So-and-so'
+              name: 'So-and-so',
+              token: service.token
             }
           });
         });
@@ -107,7 +102,6 @@ api = module.exports = {
     token: function(request, response) {
       return getService().getToken(request, function() {
         token = this.token;
-        console.log(token);
         return response.redirect('/');
       });
     }

@@ -5,12 +5,15 @@ mixin header(title)
 
 if (user.token)
   .welcome= "Welcome, " + user.name + "!"
+  h2= subtitle
   p= "activity: " + activities
   p= "Token: " + user.token
   p= "result: : " + result
-  // ul.activities
-  //   each activity in activities
-  //     li= activity
+  h3 Result
+  ul.activities
+    each activity in result
+      li= activity
+  a(href='/status/1') Route 001
 else
   .welcome Maybe you should 
     a(href='/auth') log in
