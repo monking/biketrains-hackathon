@@ -7,7 +7,7 @@ module.exports = (grunt) ->
         options:
           bare: true
         expand: true
-        cwd: 'src'
+        cwd: 'src/coffee'
         src: '*.coffee'
         dest: 'app/js'
         ext: '.js'
@@ -21,7 +21,7 @@ module.exports = (grunt) ->
           'app/views/home.html': 'src/views/home.jade'
 
     watch:
-      files: ['src/*.coffee', 'src/views/*.jade']
+      files: ['src/coffee/*.coffee', 'src/views/*.jade']
       tasks: ['default']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'

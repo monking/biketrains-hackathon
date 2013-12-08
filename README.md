@@ -8,6 +8,14 @@ Serve bike train locations realtime (Hack For LA Hackathon 2013-12-07)
 npm install
 ```
 
+create a `config.js` file like this:
+
+```
+module.exports = {
+  title: 'Bike Trains'
+};
+```
+
 ## References, opportunities
 
 - [mapmyrun.com](http://mapmyrun.com/)

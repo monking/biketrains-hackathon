@@ -1,8 +1,10 @@
-var app, express;
+var api, app, express;
 
 express = require('express');
 
 app = module.exports = express();
+
+api = require('./api');
 
 app.configure(function() {
   app.use(express.bodyParser());
@@ -12,6 +14,4 @@ app.configure(function() {
 
 app.listen(3000);
 
-app.get('/', function(req, res) {
-  return res.send('hi there');
-});
+app.get('/', api.routes);
