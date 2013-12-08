@@ -1,53 +1,76 @@
-var OAuth2, api, authToken, config;
+var Google, Strava, api, config, getService, service;
 
 config = require('../../config.js');
 
-OAuth2 = (require('simple-oauth2'))({
-  clientID: config.services.google.clientID,
-  clientSecret: config.services.google.clientSecret,
-  site: config.services.google.authSite,
-  authorizationPath: config.services.google.authorizationPath,
-  tokenPath: config.services.google.tokenPath
-});
+Strava = require('./strava.js');
 
-authToken = null;
+Google = require('./google.js');
+
+service = null;
+
+getService = function(token) {
+  var options;
+  if (service == null) {
+    options = config.services[config.defaultService];
+    options.redirectURI = config.redirectURI;
+    service = new (require("./" + config.defaultService))(options);
+  }
+  return service;
+};
 
 api = module.exports = {
   get: {
-    routes: function(request, response) {
-      console.log(authToken);
-      return response.render('../src/views/routes.jade', {
-        title: config.title,
-        loggedIn: authToken != null,
-        user: {
-          name: 'So-and-so'
+    route: function(request, response) {
+      var id, render;
+      render = function(activities) {
+        if (activities == null) {
+          activities = null;
         }
-      });
+        return response.render('../src/views/routes.jade', {
+          title: config.title,
+          activities: activities,
+          user: {
+            name: 'So-and-so'
+          }
+        });
+      };
+      if (service) {
+        id = request.params[1];
+        if (id) {
+          return service.getStatus(id, function(result) {
+            return render(result);
+          });
+        } else {
+          console.log(service.token);
+          return service.getRoutes(function(result) {
+            return render(result);
+          });
+        }
+      } else {
+        return render();
+      }
+    },
+    status: function(request, response) {
+      if (service) {
+        return service.getStatus(id, function(result) {
+          return response.render('../src/views/routes.jade', {
+            title: config.title,
+            activities: activities,
+            user: {
+              name: 'So-and-so'
+            }
+          });
+        });
+      } else {
+        return response.redirect('/');
+      }
     },
     auth: function(request, response) {
-      var authorizationURI;
-      authorizationURI = OAuth2.AuthCode.authorizeURL({
-        redirect_uri: config.redirectURI,
-        scope: config.services.google.scope
-      });
-      return response.redirect(authorizationURI);
+      return response.redirect(getService().getAuthorizationURI());
     },
     token: function(request, response) {
-      var url, urlParts;
-      url = require('url');
-      urlParts = url.parse(request.url, true);
-      return OAuth2.AuthCode.getToken({
-        code: urlParts.query.code,
-        redirect_uri: config.redirectURI
-      }, function(error, result) {
-        var tokenResult;
-        if (error) {
-          return console.log('Access Token Error', error.message);
-        } else {
-          tokenResult = OAuth2.AccessToken.create(result);
-          (tokenResult != null) && (authToken = tokenResult.token);
-          return response.redirect('/');
-        }
+      return getService().getToken(request, function() {
+        return response.redirect('/');
       });
     }
   },

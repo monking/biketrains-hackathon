@@ -13,9 +13,9 @@ app.configure () ->
 api = require './api'
 
 # define default routes based on API structure
-app.get "/#{name}", action for name, action of api.get
+app.get new RegExp("^/#{name}/?(.*)"), action for name, action of api.get
 
 # add more routes as needed
-app.get '/', api.get.routes
+app.get '/', api.get.route
 
 app.listen 3000

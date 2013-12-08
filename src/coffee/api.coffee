@@ -1,46 +1,55 @@
 config = require '../../config.js'
+Strava = require './strava.js'
+Google = require './google.js'
 
-OAuth2 = (require 'simple-oauth2')
-  clientID: config.services.google.clientID
-  clientSecret:config.services.google.clientSecret
-  site: config.services.google.authSite
-  authorizationPath: config.services.google.authorizationPath
-  tokenPath: config.services.google.tokenPath
+service = null
+getService = (token) ->
+  if !service?
+    options = config.services[config.defaultService]
+    options.redirectURI = config.redirectURI
+    service = new (require "./#{config.defaultService}") options
 
-authToken = null
+  service
 
 api = module.exports =
   get:
-    routes: (request, response) ->
-      console.log authToken
-      response.render '../src/views/routes.jade',
-        title: config.title
-        loggedIn: authToken?
-        user:
-          name: 'So-and-so'
+    route: (request, response) ->
+      render = (activities = null) ->
+        response.render '../src/views/routes.jade',
+          title: config.title
+          activities: activities
+          user:
+            name: 'So-and-so'
+
+      if service
+        id = request.params[1]
+        if id
+          service.getStatus id, (result) ->
+            render result
+        else
+          console.log service.token
+          service.getRoutes (result) ->
+            render result
+      else
+        render()
+
+    status: (request, response) ->
+      if service
+        service.getStatus id, (result) ->
+          response.render '../src/views/routes.jade',
+            title: config.title
+            activities: activities
+            user:
+              name: 'So-and-so'
+      else
+        response.redirect '/'
 
     auth: (request, response) ->
-      # optionally, include `state` parameter
-      authorizationURI = OAuth2.AuthCode.authorizeURL
-        redirect_uri: config.redirectURI
-        scope: config.services.google.scope
-
-      response.redirect authorizationURI
+      response.redirect getService().getAuthorizationURI()
 
     token: (request, response) ->
-      url = require 'url'
-      urlParts = url.parse request.url, true
-
-      OAuth2.AuthCode.getToken {
-        code: urlParts.query.code
-        redirect_uri: config.redirectURI
-      }, (error, result) ->
-        if (error)
-          console.log 'Access Token Error', error.message
-        else
-          tokenResult = OAuth2.AccessToken.create result
-          tokenResult? and authToken = tokenResult.token
-          response.redirect '/'
+      getService().getToken request, () ->
+        response.redirect '/'
 
   post: null #stub
 

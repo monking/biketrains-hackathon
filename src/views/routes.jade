@@ -3,8 +3,11 @@ include mixins/footer
 
 mixin header(title)
 
-if (loggedIn)
+if (activities)
   .welcome= "Welcome, " + user.name + "!"
+  ul.activities
+    each activity in activities
+      li= activity
 else
   .welcome Maybe you should 
     a(href='/auth') log in
