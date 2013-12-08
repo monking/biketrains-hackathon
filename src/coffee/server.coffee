@@ -16,6 +16,6 @@ api = require './api'
 app.get new RegExp("^/#{name}/?(.*)"), action for name, action of api.get
 
 # add more routes as needed
-app.get '/', api.get.route
+app.get '/', api.get.routes
 
 app.listen 3000

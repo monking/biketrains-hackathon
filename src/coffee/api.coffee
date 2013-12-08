@@ -9,32 +9,46 @@ getService = (options) ->
   serviceConfig = config.services[config.defaultService]
   serviceConfig.redirectURI = config.redirectURI
 
-  # use service config, and override with provided options
+  # if token and token.expired()
+  #   token.refresh (error, result) ->
+  #     # stub
+
   options ?= {}
   options[key] ?= value for key, value of serviceConfig
+  options.token ?= token.token.access_token if token?
   new (require "./#{config.defaultService}") options
 
 api = module.exports =
   get:
-    route: (request, response) ->
-      render = (activities = null) ->
-        response.render '../src/views/routes.jade',
+    routes: (request, response) ->
+      render = (data) ->
+        data ?= {}
+        data[key] ?= value for key, value of {
           title: config.title
-          activities: activities
+          activities: null
           user:
             name: 'So-and-so'
+            token: token
+        }
+
+        response.render '../src/views/routes.jade', data
 
       if token
         service = getService
           token: token
         id = request.params[1]
         if id
+          console.log "looking up a specific route"
           service.getStatus id, (result) ->
-            render result
+            render
+              title: config.title
+              result: result
         else
-          console.log service.token
+          console.log "listing all routes"
           service.getRoutes (result) ->
-            render result
+            render
+              title: config.title
+              result: result
       else
         render()
 
@@ -60,6 +74,7 @@ api = module.exports =
     token: (request, response) ->
       getService().getToken request, () ->
         token = @token
+        console.log token
         response.redirect '/'
 
   post: null #stub

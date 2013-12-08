@@ -11,7 +11,7 @@ In the works...
 ### Setup Grunt
 
 ```
-npm install -g grunt-cli
+npm install -g grunt-cli forever
 npm install
 ```
 
@@ -51,6 +51,12 @@ module.exports = {
   }
 };
 ```
+
+## Run the service
+
+Do `npm start`.
+
+Use `forever` to manage the service.
 
 ## What's the goal?
 

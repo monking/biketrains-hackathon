@@ -12,16 +12,8 @@ module.exports = (grunt) ->
         dest: 'app/js'
         ext: '.js'
 
-    jade:
-      compile:
-        options:
-          data:
-            debug: false
-        files:
-          'app/views/home.html': 'src/views/home.jade'
-
     watch:
-      files: ['src/coffee/*.coffee', 'src/views/*.jade']
+      files: ['src/coffee/*.coffee']
       tasks: ['default']
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'

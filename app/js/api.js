@@ -21,24 +21,38 @@ getService = function(options) {
       options[key] = value;
     }
   }
+  if (token != null) {
+    if (options.token == null) {
+      options.token = token.token.access_token;
+    }
+  }
   return new (require("./" + config.defaultService))(options);
 };
 
 api = module.exports = {
   get: {
-    route: function(request, response) {
+    routes: function(request, response) {
       var id, render, service;
-      render = function(activities) {
-        if (activities == null) {
-          activities = null;
+      render = function(data) {
+        var key, value, _ref;
+        if (data == null) {
+          data = {};
         }
-        return response.render('../src/views/routes.jade', {
+        _ref = {
           title: config.title,
-          activities: activities,
+          activities: null,
           user: {
-            name: 'So-and-so'
+            name: 'So-and-so',
+            token: token
           }
-        });
+        };
+        for (key in _ref) {
+          value = _ref[key];
+          if (data[key] == null) {
+            data[key] = value;
+          }
+        }
+        return response.render('../src/views/routes.jade', data);
       };
       if (token) {
         service = getService({
@@ -46,13 +60,20 @@ api = module.exports = {
         });
         id = request.params[1];
         if (id) {
+          console.log("looking up a specific route");
           return service.getStatus(id, function(result) {
-            return render(result);
+            return render({
+              title: config.title,
+              result: result
+            });
           });
         } else {
-          console.log(service.token);
+          console.log("listing all routes");
           return service.getRoutes(function(result) {
-            return render(result);
+            return render({
+              title: config.title,
+              result: result
+            });
           });
         }
       } else {
@@ -86,6 +107,7 @@ api = module.exports = {
     token: function(request, response) {
       return getService().getToken(request, function() {
         token = this.token;
+        console.log(token);
         return response.redirect('/');
       });
     }

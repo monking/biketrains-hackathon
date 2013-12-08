@@ -18,6 +18,6 @@ for (name in _ref) {
   app.get(new RegExp("^/" + name + "/?(.*)"), action);
 }
 
-app.get('/', api.get.route);
+app.get('/', api.get.routes);
 
 app.listen(3000);
