@@ -1,10 +1,8 @@
-var api, app, express;
+var action, api, app, express, name, _ref;
 
 express = require('express');
 
 app = module.exports = express();
-
-api = require('./api');
 
 app.configure(function() {
   app.use(express.bodyParser());
@@ -12,6 +10,14 @@ app.configure(function() {
   return app.use(app.router);
 });
 
-app.listen(3000);
+api = require('./api');
 
-app.get('/', api.routes);
+_ref = api.get;
+for (name in _ref) {
+  action = _ref[name];
+  app.get("/" + name, action);
+}
+
+app.get('/', api.get.routes);
+
+app.listen(3000);

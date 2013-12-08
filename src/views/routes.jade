@@ -3,6 +3,10 @@ include mixins/footer
 
 mixin header(title)
 
-
+if (loggedIn)
+  .welcome= "Welcome, " + user.name + "!"
+else
+  .welcome Maybe you should 
+    a(href='/auth') log in
 
 mixin footer()

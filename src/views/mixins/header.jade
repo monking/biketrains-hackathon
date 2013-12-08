@@ -3,5 +3,16 @@ mixin header(title)
   html(lang=en)
     head
       title= title
+      style.
+        body {
+          font-family: sans-serif;
+          max-width: 980px;
+          margin: 0 auto;
+        }
+        footer {
+          padding-top: 1em;
+          border-top: 1px solid rgba(0,0,0,0.3);
+          margin: 1em 0;
+        }
     body
       h1= title

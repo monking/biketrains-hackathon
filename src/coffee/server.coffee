@@ -1,7 +1,6 @@
 express = require 'express'
 #mongoose = require 'mongoose'
 app = module.exports = express()
-api = require './api'
 
 # # connect to Mongo when the app initializes
 # mongoose.connect 'mongodb://localhost/norum'
@@ -11,12 +10,12 @@ app.configure () ->
   app.use(express.methodOverride())
   app.use(app.router)
 
-# # set up the RESTful API, handler methods are defined in api.js
-# api = require './controllers/api.js'
-# app.post '/thread', api.post
-# app.get '/thread/:title.:format?', api.show
-# app.get '/thread', api.list
+api = require './api'
+
+# define default routes based on API structure
+app.get "/#{name}", action for name, action of api.get
+
+# add more routes as needed
+app.get '/', api.get.routes
 
 app.listen 3000
-
-app.get '/', api.routes
