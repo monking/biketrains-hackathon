@@ -7,5 +7,7 @@ mixin header(title)
       meta(name='viewport', content='width=device-width')
     script(src='https://maps.googleapis.com/maps/api/js?key=' + services.google.apiKey + '&sensor=true')
     body
-      h1
-        a(href='/')= title
+      header
+        h1
+          a(href='/')= title
+        h2= subtitle

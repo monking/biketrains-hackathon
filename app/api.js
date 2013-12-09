@@ -11,8 +11,9 @@ token = null;
 
 viewDefaultData = {
   title: config.title,
+  subtitle: 'Commute by bike',
   user: {
-    name: 'So-and-so',
+    name: 'Christopher',
     token: null
   },
   routes: null,
@@ -65,24 +66,38 @@ inherit = function() {
 api = module.exports = {
   get: {
     routes: function(request, response) {
-      var render, service;
+      var data, render, service;
       render = function(data) {
         return response.render('../src/views/routes.jade', data);
       };
       service = getService();
       if (service.token) {
-        return service.getRoutes(function(result) {
-          var data;
+        if (request.query.zip_from) {
+          return service.getRoutes(function(result) {
+            var data;
+            data = inherit({
+              subtitle: "All Routes",
+              routes: result,
+              query: request.query,
+              user: {
+                name: 'Christopher',
+                token: service.token
+              }
+            }, viewDefaultData);
+            return render(data);
+          });
+        } else {
           data = inherit({
             subtitle: "All Routes",
-            routes: result,
+            routes: null,
+            query: request.query,
             user: {
-              name: 'So-and-so',
+              name: 'Christopher',
               token: service.token
             }
           }, viewDefaultData);
           return render(data);
-        });
+        }
       } else {
         return render(viewDefaultData);
       }
@@ -95,12 +110,13 @@ api = module.exports = {
         return service.getStatus(id, function(result) {
           var data;
           data = inherit({
+            subtitle: 'Strava Route',
             route: {
               id: id
             },
             stream: result,
             user: {
-              name: 'So-and-so',
+              name: 'Christopher',
               token: service.token
             }
           }, viewDefaultData);

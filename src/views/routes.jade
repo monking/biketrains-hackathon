@@ -6,16 +6,55 @@ mixin header(title)
 
 if (user && user.token)
   .welcome= "Welcome, " + user.name + "!"
-  h2= subtitle
   form
-    h3 Search for Routes Near You
+    h3 Search for Bike Commuter Routes Near You
     .search
       input(type='text', name="zip_from", placeholder="ZIP (from)")
       input(type='text', name="zip_to", placeholder="ZIP (to)")
     .submit
       input(type='submit', value='Search')
+  if query && query.time
+    p Thank you for sharing your interest in commuting by bike! 
+      a(href='http://twitter.com') Tweet this.
   if routes
+    h2 Routes
     mixin listRoutes(routes)
+    if query && query.zip_from
+      form.survey
+        h3 Not finding what you're looking for?
+        p Register your interest in a route here, or get help starting your own route.
+        p
+          | When do you want to ride from 
+          b= query.zip_from
+          |  to 
+          b= query.zip_to
+          | .
+        .time
+          select(name='day')
+            option Monday
+            option Tuesday
+            option Wednesday
+            option Thursday
+            option Friday
+          select(name='time')
+            option 6 AM
+            option 7 AM
+            option 8 AM
+            option 9 AM
+            option 10 AM
+            option 11 AM
+            option 1 PM
+            option 2 PM
+            option 3 PM
+            option 4 PM
+            option 5 PM
+            option 6 PM
+            option 7 PM
+            option 8 PM
+            option 9 PM
+            option 10 PM
+        .submit
+          input(type='submit', value='Send')
 else
   .welcome Maybe you should 
     a(href='/auth') log in

@@ -2,6 +2,17 @@ html, body {
   width: 100%;
   height: 100%;
 }
+h1, h2 {
+  margin: 0;
+}
+header {
+  margin: 1em 0;
+}
+header:after {
+  display: table;
+  content: " ";
+  clear: both;
+}
 body {
   font-family: sans-serif;
   max-width: 980px;
@@ -18,23 +29,39 @@ a {
   text-decoration: none;
 }
 form {
-  width:400px;
+  width: 480px;
+  max-width: 100%;
+  margin-bottom: 2em;
 }
 input, select {
   font-size: inherit;
+}
+select {
+  height: 2em;
+  line-height: 2em;
 }
 input[type=text] {
   border: 1px solid rgba(0,0,0,0.2);
   padding: 0.2em;
   border-radius: 0.1em;
-  width:47%;
+  width: 47%;
+}
+input[type=text]:first-child,
+select:first-child {
+  margin-right: 1%;
 }
 input[type=submit],
 input[type=button],
 button {
   padding: 0.2em;
 }
+select {
+  width: 47%;
+}
 form .submit input[type="submit"] {
   text-align: center;
   width: 98%;
+}
+.survey {
+  margin-top: 3em;
 }

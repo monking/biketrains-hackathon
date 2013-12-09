@@ -6,8 +6,9 @@ token = null
 
 viewDefaultData =
   title: config.title
+  subtitle: 'Commute by bike'
   user:
-    name: 'So-and-so'
+    name: 'Christopher'
     token: null
   routes: null
   route: null
@@ -48,12 +49,25 @@ api = module.exports =
       service = getService()
 
       if service.token
-        service.getRoutes (result) ->
+        if request.query.zip_from
+          service.getRoutes (result) ->
+            data = inherit {
+              subtitle: "All Routes",
+              routes: result
+              query: request.query
+              user:
+                name: 'Christopher'
+                token: service.token
+            }, viewDefaultData
+
+            render data
+        else
           data = inherit {
             subtitle: "All Routes",
-            routes: result
+            routes: null
+            query: request.query
             user:
-              name: 'So-and-so'
+              name: 'Christopher'
               token: service.token
           }, viewDefaultData
 
@@ -69,11 +83,12 @@ api = module.exports =
         service.getStatus id, (result) ->
           # console.log result
           data = inherit {
+            subtitle: 'Strava Route'
             route:
               id: id
             stream: result
             user:
-              name: 'So-and-so'
+              name: 'Christopher'
               token: service.token
           }, viewDefaultData
 
