@@ -6,7 +6,7 @@ class Geoloqi extends Service
   status: null
   getConductor: (callback) ->
     self = @
-    @get '/athlete', (body) ->
+    @get '/account/profile', (body) ->
       self.conductor = body
       callback body
 

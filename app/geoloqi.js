@@ -21,7 +21,7 @@ Geoloqi = (function(_super) {
   Geoloqi.prototype.getConductor = function(callback) {
     var self;
     self = this;
-    return this.get('/athlete', function(body) {
+    return this.get('/account/profile', function(body) {
       self.conductor = body;
       return callback(body);
     });

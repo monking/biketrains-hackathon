@@ -31,6 +31,8 @@ getService = (options) ->
   options.token = options.token or token or (config.debug and serviceConfig.debugToken)
   service = new (require "./#{config.defaultService}") options
 
+  console.log "created service #{config.defaultService}"
+
   token = service.token if service.token?
 
   service

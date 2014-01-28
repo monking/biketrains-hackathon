@@ -39,6 +39,7 @@ getService = function(options) {
   }
   options.token = options.token || token || (config.debug && serviceConfig.debugToken);
   service = new (require("./" + config.defaultService))(options);
+  console.log("created service " + config.defaultService);
   if (service.token != null) {
     token = service.token;
   }
