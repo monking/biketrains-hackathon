@@ -1,4 +1,4 @@
-var Google, Strava, api, config, getService, inherit, token, viewDefaultData,
+var Google, Strava, api, config, db, getService, inherit, mongoose, token, viewDefaultData,
   __slice = [].slice;
 
 config = require('../config.js');
@@ -7,13 +7,15 @@ Strava = require('./strava.js');
 
 Google = require('./google.js');
 
+mongoose = require('mongoose');
+
 token = null;
 
 viewDefaultData = {
   title: config.title,
   subtitle: 'Commute by bike',
   user: {
-    name: 'Christopher',
+    name: 'Guest',
     token: null
   },
   routes: null,
@@ -63,6 +65,18 @@ inherit = function() {
   return child;
 };
 
+mongoose.connect('mongodb://localhost/BikeTrains_dev');
+
+db = mongoose.connection;
+
+db.on('error', function() {
+  return console.error.bind(console.error, 'connection error:');
+});
+
+db.once('open', function() {
+  return console.log('yay, mongo open');
+});
+
 api = module.exports = {
   get: {
     routes: function(request, response) {
@@ -80,7 +94,7 @@ api = module.exports = {
               routes: result,
               query: request.query,
               user: {
-                name: 'Christopher',
+                name: 'Guest',
                 token: service.token
               }
             }, viewDefaultData);
@@ -92,7 +106,7 @@ api = module.exports = {
             routes: null,
             query: request.query,
             user: {
-              name: 'Christopher',
+              name: 'Guest',
               token: service.token
             }
           }, viewDefaultData);
@@ -116,7 +130,7 @@ api = module.exports = {
             },
             stream: result,
             user: {
-              name: 'Christopher',
+              name: 'Guest',
               token: service.token
             }
           }, viewDefaultData);
